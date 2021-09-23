@@ -49,16 +49,24 @@ exports.createpatient = function (req, res, next) {
                 created_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                 
                 updated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                date_of_birth: req.body.date_of_birth,
+                address: req.body.address,
+                city: req.body.city,
+                height: req.body.height,
+                weight: req.body.weight,
+                doctor_id: req.body.doctor_id,
                 password: password,
                 name: req.body.name,
-                pmdc_no: req.body.pmdc_no,
-                specialization: req.body.specialization
+                gender: req.body.gender
             };
             // To handle insertion error due to ' in query
             patientProfile.name = patientProfile.name.replace(/'/g, '');
-            patientProfile.pmdc_no = patientProfile.pmdc_no.replace(/'/g, '');
+            patientProfile.address = patientProfile.address.replace(/'/g, '');
             patientProfile.email = patientProfile.email.replace(/'/g, '');
-            patientProfile.specialization = patientProfile.specialization.replace(/'/g, '');
+            patientProfile.city = patientProfile.city.replace(/'/g, '');
+            patientProfile.gender = patientProfile.gender.replace(/'/g, '');
+            patientProfile.city = patientProfile.city.replace(/'/g, '');
+
             services.createpatient(patientProfile, function (err, user) {
                 if (err) {
                     logger.error(err);
@@ -83,19 +91,25 @@ exports.updatepatient = function (req, res, next) {
         contact_no: req.body.contact_no,
         email: req.body.email,
        
-        created_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        
-        updated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        // password: password,
         name: req.body.name,
-        pmdc_no: req.body.pmdc_no,
-        specialization: req.body.specialization
+               
+                date_of_birth: req.body.date_of_birth,
+                address: req.body.address,
+                city: req.body.city,
+                height: req.body.height,
+                weight: req.body.weight,
+                doctor_id: req.body.doctor_id,
+                // password: password,
+                gender: req.body.gender
     };
 
     patientProfile.name = patientProfile.name.replace(/'/g, '');
-    patientProfile.pmdc_no = patientProfile.pmdc_no.replace(/'/g, '');
-    patientProfile.email = patientProfile.email.replace(/'/g, '');
-    patientProfile.specialization = patientProfile.specialization.replace(/'/g, '');
+            patientProfile.address = patientProfile.address.replace(/'/g, '');
+            patientProfile.email = patientProfile.email.replace(/'/g, '');
+            patientProfile.city = patientProfile.city.replace(/'/g, '');
+            patientProfile.gender = patientProfile.gender.replace(/'/g, '');
+            patientProfile.city = patientProfile.city.replace(/'/g, '');
+
     services.updatepatient(req.params.id, patientProfile, function (err, affectedRows) {
             if (err) {
                 logger.error(err);

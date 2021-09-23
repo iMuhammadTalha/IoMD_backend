@@ -83,7 +83,7 @@ exports.getAllpatientsWithPagination = function (page, pageSize, sortingName, so
 
 exports.getAllpatients = function (result) {
     const sqlQuery = `
-    SELECT patient.*
+    SELECT patient.*, doctor.name as doctor_name
 	FROM public.patient JOIN public.doctor ON patient.doctor_id=doctor.id
     `;
     try {
@@ -107,7 +107,7 @@ exports.createpatient = function (patient, result) {
                 logger.error('Error: ', err.stack);
                 result(err, null);
             }
-            client.query(`INSERT INTO patient ( name, pmdc_no, contact_no, email, specialization, password, created_date) VALUES ( '${patient.name}', '${patient.pmdc_no}', '${patient.contact_no}', '${patient.email}', '${patient.specialization}', '${patient.password}', '${patient.created_date}') RETURNING id`, (err, res) => {
+            client.query(`INSERT INTO patient ( doctor_id, name, date_of_birth, gender, contact_no, email, address, city, height, weight, password, created_at) VALUES ( '${patient.doctor_id}', '${patient.name}', '${patient.date_of_birth}', '${patient.gender}', '${patient.contact_no}', '${patient.email}', '${patient.address}', '${patient.city}', '${patient.height}', '${patient.weight}', '${patient.password}', '${patient.created_date}') RETURNING id`, (err, res) => {
                 if (err) {
                     logger.error('Error: ', err.stack);
                     result(err, null);
@@ -132,7 +132,7 @@ exports.updatepatient = function (id, patient, result) {
                 result(err, null);
             }
             
-            client.query(`UPDATE patient SET name='${patient.name}', pmdc_no='${patient.pmdc_no}', contact_no='${patient.contact_no}', email='${patient.email}', specialization='${patient.specialization}' WHERE id= '${id}'`, (err, res) => {
+            client.query(`UPDATE patient SET doctor_id='${patient.doctor_id}', name='${patient.name}', date_of_birth='${patient.date_of_birth}', gender='${patient.gender}', contact_no='${patient.contact_no}', email='${patient.email}', address='${patient.address}', city='${patient.city}', height='${patient.height}', weight='${patient.weight}' WHERE id= '${id}'`, (err, res) => {
                         release();
                         if (err) {
                             logger.error('Error: ', err.stack);

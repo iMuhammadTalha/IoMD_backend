@@ -90,7 +90,7 @@ exports.validateEmailAndPassword = function (req, res, next) {
 
 exports.isRequiredFieldMissed = function (req, res, next) {
     logger.info(req.body);
-    if (req.body.email && req.body.contact_no && req.body.password && req.body.name && req.body.pmdc_no && req.body.specialization) {
+    if (req.body.email && req.body.contact_no && req.body.password && req.body.name && req.body.doctor_id && req.body.city) {
         next();
     } else {
         logger.info("Req missed");

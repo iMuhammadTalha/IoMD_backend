@@ -15,12 +15,13 @@ ALTER TABLE public.admin
 CREATE TABLE IF NOT EXISTS public.doctor
 (
     id bigserial NOT NULL,
-    name character(255) NOT NULL,
-    pmdc_no character(200),
-    contact_no character(25) NOT NULL,
-    email character(255) NOT NULL,
-    specialization character(200),
-    password character(200) NOT NULL,
+    name text NOT NULL,
+    pmdc_no text,
+    contact_no text NOT NULL,
+    email text NOT NULL,
+    specialization text,
+    password text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -42,6 +43,8 @@ CREATE TABLE IF NOT EXISTS public.patient
     city text,
     height integer,
     weight integer,
+    password text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (doctor_id)
         REFERENCES public.doctor (id) MATCH SIMPLE

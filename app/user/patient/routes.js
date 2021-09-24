@@ -35,7 +35,9 @@ router.put('/update-patient/:id', controller.updatepatient, function (req, res) 
 });
 
 
-
+router.delete('/delete-patient/:id',  controller.deletePatient, function (req, res) {
+    res.send(res.locals.Msg);
+});
 
 
 

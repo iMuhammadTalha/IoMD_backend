@@ -127,7 +127,20 @@ exports.updatepatient = function (req, res, next) {
 
 
 
-
+exports.deletePatient = function (req, res, next) {
+    services.deletePatient(req.params.id, function (err, affectedRows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in delete patient'});
+        }
+        if (affectedRows === 0) {
+            res.locals.Msg = {msg: 'No patient found with the given id'};
+        } else {
+            res.locals.Msg = {msg: 'patient Deleted'};
+        }
+        next();
+    });
+};
 
 
 

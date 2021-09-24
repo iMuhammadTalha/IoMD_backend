@@ -150,7 +150,23 @@ exports.updatepatient = function (id, patient, result) {
 
 
 
+exports.deletePatient = function (id, result) {
+    try {
+        const sqlQuery = `DELETE FROM patient WHERE id='${id}'`;
 
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rowCount);
+            }
+        });
+
+    } catch (error) {
+        logger.error(error);
+    }
+};
 
 
 

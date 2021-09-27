@@ -110,6 +110,22 @@ exports.updatecareTaker = function (req, res, next) {
 
 
 
+exports.deletecareTaker = function (req, res, next) {
+    services.deletecareTaker(req.params.id, function (err, affectedRows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in delete careTaker'});
+        }
+        if (affectedRows === 0) {
+            res.locals.Msg = {msg: 'No careTaker found with the given id'};
+        } else {
+            res.locals.Msg = {msg: 'careTaker Deleted'};
+        }
+        next();
+    });
+};
+
+
 
 
 

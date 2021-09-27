@@ -35,7 +35,9 @@ router.put('/update-careTaker/:id', controller.updatecareTaker, function (req, r
 });
 
 
-
+router.delete('/delete-careTaker/:id',  controller.deletecareTaker, function (req, res) {
+    res.send(res.locals.Msg);
+});
 
 
 

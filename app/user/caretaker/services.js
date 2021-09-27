@@ -84,7 +84,7 @@ exports.getAllcareTakerWithPagination = function (page, pageSize, sortingName, s
 exports.getAllcareTaker = function (result) {
     const sqlQuery = `
     SELECT caretaker.*, patient.name as patient_name
-	FROM public.caretaker JOIN public.patient ON caretaker.patient_id=careTaker.id
+	FROM public.caretaker JOIN public.patient ON caretaker.patient_id=patient.id
     `;
     try {
         pool.query(sqlQuery, [], (err, res) => {
@@ -150,6 +150,25 @@ exports.updatecareTaker = function (id, careTaker, result) {
 
 
 
+
+
+exports.deletecareTaker = function (id, result) {
+    try {
+        const sqlQuery = `DELETE FROM careTaker WHERE id='${id}'`;
+
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rowCount);
+            }
+        });
+
+    } catch (error) {
+        logger.error(error);
+    }
+};
 
 
 

@@ -1,0 +1,20 @@
+
+CREATE TABLE IF NOT EXISTS public.caretaker
+(
+    id bigserial NOT NULL,
+    name text NOT NULL,
+    contact_no text NOT NULL,
+    email text NOT NULL,
+    careTaker_id bigserial NOT NULL,
+    password text NOT NULL,
+    created_at timestamp with time zone,
+    PRIMARY KEY (id),
+    FOREIGN KEY (careTaker_id)
+        REFERENCES public.careTaker (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE public.caretaker
+    OWNER to postgres;

@@ -55,3 +55,25 @@ CREATE TABLE IF NOT EXISTS public.patient
 
 ALTER TABLE public.patient
     OWNER to postgres;
+
+
+
+CREATE TABLE IF NOT EXISTS public.caretaker
+(
+    id bigserial NOT NULL,
+    name text NOT NULL,
+    contact_no text NOT NULL,
+    email text NOT NULL,
+    patient_id bigserial NOT NULL,
+    password text NOT NULL,
+    created_at timestamp with time zone,
+    PRIMARY KEY (id),
+    FOREIGN KEY (patient_id)
+        REFERENCES public.patient (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE public.caretaker
+    OWNER to postgres;

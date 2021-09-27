@@ -23,6 +23,8 @@ router.use('/doctor', require(path.join(__dirname, '/doctor/routes.js')));
 
 router.use('/patient', require(path.join(__dirname, '/patient/routes.js')));
 
+router.use('/careTaker', require(path.join(__dirname, '/caretaker/routes.js')));
+
 // router.use('/app-user', require(path.join(__dirname, '/app-user/routes.js')));
 // router.use('/fleet', require(path.join(__dirname, '/fleet/routes.js')));
 // router.use('/driver', require(path.join(__dirname, '/driver/routes.js')));

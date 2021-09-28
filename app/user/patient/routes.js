@@ -20,9 +20,12 @@ router.get('/get-all-patients/:page/:pageSize/:sortingName/:sortingOrder/:search
 
 
 router.get('/get-all-patients', controller.getAllpatients, function (req, res) {
-    res.send(res.locals.allFleetUsers);
+    res.send(res.locals.allPatients);
 });
 
+router.get('/get-doctor-all-patients/:doctor_id', controller.getDoctorAllpatients, function (req, res) {
+    res.send(res.locals.allDoctorPatients);
+});
 
 
 // isRequiredFieldMissed     validateFieldAndAlreadyEmailAndAlreadyMobile,

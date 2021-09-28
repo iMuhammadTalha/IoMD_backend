@@ -29,7 +29,19 @@ exports.getAllcareTaker = function (req, res, next) {
             return res.status(400).send({msg: 'Error in get all careTaker'});
         }
 
-        res.locals.allFleetUsers = rows;
+        res.locals.allCareTaker = rows;
+        next();
+    });
+};
+
+exports.getDoctorAllcareTaker = function (req, res, next) {
+    services.getDoctorAllcareTaker(req.params.doctor_id, function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all careTaker'});
+        }
+
+        res.locals.allDoctorCareTaker = rows;
         next();
     });
 };

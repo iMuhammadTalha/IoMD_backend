@@ -100,6 +100,26 @@ exports.getAllpatients = function (result) {
     }
 };
 
+exports.getDoctorAllpatients = function (doctor_id, result) {
+    const sqlQuery = `
+    SELECT patient.*, doctor.name as doctor_name, doctor.id as doctor_id
+	FROM public.patient JOIN public.doctor ON patient.doctor_id=doctor.id
+    WHERE doctor.id= '${doctor_id}'
+    `;
+    try {
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.createpatient = function (patient, result) {
     try {
         pool.getClient((err, client, release) => {

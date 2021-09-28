@@ -20,10 +20,12 @@ router.get('/get-all-careTaker/:page/:pageSize/:sortingName/:sortingOrder/:searc
 
 
 router.get('/get-all-careTaker', controller.getAllcareTaker, function (req, res) {
-    res.send(res.locals.allFleetUsers);
+    res.send(res.locals.allCareTaker);
 });
 
-
+router.get('/get-doctor-all-careTaker/:doctor_id', controller.getDoctorAllcareTaker, function (req, res) {
+    res.send(res.locals.allDoctorCareTaker);
+});
 
 // isRequiredFieldMissed     validateFieldAndAlreadyEmailAndAlreadyMobile,
 router.post('/create-careTaker', isRequiredFieldMissed,  controller.createcareTaker, function (req, res) {

@@ -29,11 +29,22 @@ exports.getAllpatients = function (req, res, next) {
             return res.status(400).send({msg: 'Error in get all patient'});
         }
 
-        res.locals.allFleetUsers = rows;
+        res.locals.allPatients = rows;
         next();
     });
 };
 
+exports.getDoctorAllpatients = function (req, res, next) {
+    services.getDoctorAllpatients(req.params.doctor_id, function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get doctor all patient'});
+        }
+
+        res.locals.allDoctorPatients = rows;
+        next();
+    });
+};
 
 exports.createpatient = function (req, res, next) {
 

@@ -100,6 +100,26 @@ exports.getAllcareTaker = function (result) {
     }
 };
 
+exports.getDoctorAllcareTaker = function (doctor_id, result) {
+    const sqlQuery = `
+    SELECT caretaker.*, patient.name as patient_name
+	FROM public.caretaker JOIN public.patient ON caretaker.patient_id=patient.id
+    WHERE patient.doctor_id= '${doctor_id}'
+    `;
+    try {
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.createcareTaker = function (careTaker, result) {
     try {
         pool.getClient((err, client, release) => {

@@ -299,6 +299,84 @@ exports.findAdmin = function findAdmin(user, result) {
     }
 };
 
+exports.findDoctor = function (user, result) {
+
+    try {
+        pool.getClient((err, client, release) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            }
+            logger.info(user.email);
+
+            client.query(`SELECT * FROM doctor WHERE email = '${user.email}'`, (err, res) => {
+
+                if (err) {
+                    logger.error('Error: ', err.stack);
+                    result(err, null);
+                } else {
+                    release();
+                    result(null, res);
+                }
+            });
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
+exports.findPatient = function (user, result) {
+
+    try {
+        pool.getClient((err, client, release) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            }
+            logger.info(user.email);
+
+            client.query(`SELECT * FROM patient WHERE email = '${user.email}'`, (err, res) => {
+
+                if (err) {
+                    logger.error('Error: ', err.stack);
+                    result(err, null);
+                } else {
+                    release();
+                    result(null, res);
+                }
+            });
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
+exports.findCareTaker = function (user, result) {
+
+    try {
+        pool.getClient((err, client, release) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            }
+            logger.info(user.email);
+
+            client.query(`SELECT * FROM caretaker WHERE email = '${user.email}'`, (err, res) => {
+
+                if (err) {
+                    logger.error('Error: ', err.stack);
+                    result(err, null);
+                } else {
+                    release();
+                    result(null, res);
+                }
+            });
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.getUserInfo = function getUserInfo(id, result) {
 
     try {

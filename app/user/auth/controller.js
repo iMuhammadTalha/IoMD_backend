@@ -15,9 +15,6 @@ exports.adminLogin = function (req, res) {
         email: req.body.email,
         password: req.body.password
     };
-logger.info('EMAIL');
-
-
 
     // if(req.body.email=='iotlab@seecs.edu.pk' && req.body.password=='1234'){
     //     const payload = {
@@ -41,9 +38,6 @@ logger.info('EMAIL');
 
     //     return res.status(401).send('Password incorrect');
     // }
-    
-
-
 
     services.findAdmin(userCheck, function (err, user) {
         if (err) res.send(err);
@@ -90,7 +84,136 @@ logger.info('EMAIL');
     });
 };
 
+exports.doctorLogin = function (req, res) {
 
+    var userCheck = {
+        email: req.body.email,
+        password: req.body.password
+    };
+
+
+    services.findDoctor(userCheck, function (err, user) {
+        if (err) res.send(err);
+        // Check for user
+        if (user.rowCount === 0) {
+            return res.status(404).send({msg: 'Doctor Email is not exist'});
+        } else {
+
+            // Check Password
+            bcrypt.compare(userCheck.password, user.rows[0].password).then(isMatch => {
+                if (isMatch) {
+                    // User Matched
+                    const payload = {
+                        id: user.rows[0].id,
+                        email: user.rows[0].email,
+                        role: 'doctor'
+                    }; // Create JWT Payload
+                    const token = jwt.sign(payload, keys, {expiresIn: 3600000000000});
+
+                    res.status(200).json({
+                        token: 'Bearer ' + token,
+                        user: {
+                            user_id: user.rows[0].id,
+                            email: user.rows[0].email,
+                            name: user.rows[0].name ,
+                            role: 'doctor'
+                        }
+                    });
+                    // });
+                } else {
+                    return res.status(401).send('Password incorrect');
+                }
+            });
+        }
+    });
+};
+
+
+exports.patientLogin = function (req, res) {
+
+    var userCheck = {
+        email: req.body.email,
+        password: req.body.password
+    };
+
+    services.findPatient(userCheck, function (err, user) {
+        if (err) res.send(err);
+        // Check for user
+        if (user.rowCount === 0) {
+            return res.status(404).send({msg: 'Patient Email is not exist'});
+        } else {
+
+            // Check Password
+            bcrypt.compare(userCheck.password, user.rows[0].password).then(isMatch => {
+                if (isMatch) {
+                    // User Matched
+                    const payload = {
+                        id: user.rows[0].id,
+                        email: user.rows[0].email,
+                        role: 'patient'
+                    }; // Create JWT Payload
+                    const token = jwt.sign(payload, keys, {expiresIn: 3600000000000});
+
+                    res.status(200).json({
+                        token: 'Bearer ' + token,
+                        user: {
+                            user_id: user.rows[0].id,
+                            email: user.rows[0].email,
+                            name: user.rows[0].name ,
+                            role: 'patient'
+                        }
+                    });
+                    // });
+                } else {
+                    return res.status(401).send('Password incorrect');
+                }
+            });
+        }
+    });
+};
+
+exports.caretakerLogin = function (req, res) {
+
+    var userCheck = {
+        email: req.body.email,
+        password: req.body.password
+    };
+
+    services.findCareTaker(userCheck, function (err, user) {
+        if (err) res.send(err);
+        // Check for user
+        if (user.rowCount === 0) {
+            return res.status(404).send({msg: 'Patient Email is not exist'});
+        } else {
+
+            // Check Password
+            bcrypt.compare(userCheck.password, user.rows[0].password).then(isMatch => {
+                if (isMatch) {
+                    // User Matched
+                    const payload = {
+                        id: user.rows[0].id,
+                        email: user.rows[0].email,
+                        role: 'caretaker'
+                    }; // Create JWT Payload
+                    const token = jwt.sign(payload, keys, {expiresIn: 3600000000000});
+
+                    res.status(200).json({
+                        token: 'Bearer ' + token,
+                        user: {
+                            user_id: user.rows[0].id,
+                            email: user.rows[0].email,
+                            name: user.rows[0].name ,
+                            role: 'caretaker'
+                        }
+                    });
+                    // });
+                } else {
+                    return res.status(401).send('Password incorrect');
+                }
+            });
+        }
+    });
+};
 
 exports.getUserInfoByJWTToken = function (req, res) {
 

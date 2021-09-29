@@ -151,6 +151,22 @@ exports.updateDoctor = function (id, doctor, result) {
 
 
 
+exports.getTotalDoctors = function (result) {
+    
+    const sqlQuery = `SELECT COUNT(*) As COUNT FROM doctor`;
+    try {
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
 
 
 

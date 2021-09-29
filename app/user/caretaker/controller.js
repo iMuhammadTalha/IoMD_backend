@@ -140,7 +140,19 @@ exports.deletecareTaker = function (req, res, next) {
 
 
 
-
+exports.getTotalCareTakers = function (req, res, next) {
+    res.locals.totalCareTakers = {totalCareTakers: 0};
+    services.getTotalCareTakers(function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all CareTakers'});
+        }
+        if (rows[0]) {
+            res.locals.totalCareTakers.totalCareTakers = rows[0].count;
+        }
+        next();
+    });
+};
 
 
 

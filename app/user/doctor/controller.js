@@ -29,11 +29,24 @@ exports.getAllDoctors = function (req, res, next) {
             return res.status(400).send({msg: 'Error in get all Doctor'});
         }
 
-        res.locals.allFleetUsers = rows;
+        res.locals.allDoctors = rows;
         next();
     });
 };
 
+exports.getTotalDoctors = function (req, res, next) {
+    res.locals.totalDoctors = {totalDoctors: 0};
+    services.getTotalDoctors(function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all Doctor'});
+        }
+        if (rows[0]) {
+            res.locals.totalDoctors.totalDoctors = rows[0].count;
+        }
+        next();
+    });
+};
 
 exports.createDoctor = function (req, res, next) {
 

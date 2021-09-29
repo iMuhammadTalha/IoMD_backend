@@ -160,3 +160,16 @@ exports.deletePatient = function (req, res, next) {
 
 
 
+exports.getTotalPatients = function (req, res, next) {
+    res.locals.totalPatients = {totalPatients: 0};
+    services.getTotalPatients(function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all Patient'});
+        }
+        if (rows[0]) {
+            res.locals.totalPatients.totalPatients = rows[0].count;
+        }
+        next();
+    });
+};

@@ -15,7 +15,9 @@ router.get('/get-all-patients/:page/:pageSize/:sortingName/:sortingOrder/:search
 
 
 
-
+router.get('/get-total-patients', controller.getTotalPatients, function (req, res) {
+    res.send(res.locals.totalPatients);
+});
 
 
 

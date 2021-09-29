@@ -15,12 +15,14 @@ router.get('/get-all-doctors/:page/:pageSize/:sortingName/:sortingOrder/:searchK
 
 
 
-
+router.get('/get-total-doctors', controller.getTotalDoctors, function (req, res) {
+    res.send(res.locals.totalDoctors);
+});
 
 
 
 router.get('/get-all-doctors', controller.getAllDoctors, function (req, res) {
-    res.send(res.locals.allFleetUsers);
+    res.send(res.locals.allDoctors);
 });
 
 

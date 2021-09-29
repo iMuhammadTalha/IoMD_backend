@@ -42,7 +42,9 @@ router.delete('/delete-careTaker/:id',  controller.deletecareTaker, function (re
 });
 
 
-
+router.get('/get-total-caretakers', controller.getTotalCareTakers, function (req, res) {
+    res.send(res.locals.totalCareTakers);
+});
 
 
 

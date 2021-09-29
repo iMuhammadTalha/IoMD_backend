@@ -23,7 +23,7 @@ module.exports = function (io) { // catch here
     });
 
 //attaching other routes to the base router.
-    router.use('/air', require(path.join(__dirname, '/app/airReadings/routes.js')));
+    router.use('/vital', require(path.join(__dirname, '/app/vital/routes.js')));
 
     router.use('/user', require(path.join(__dirname, '/app/user/routes.js')));
     

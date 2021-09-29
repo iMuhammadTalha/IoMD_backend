@@ -1,0 +1,23 @@
+   CREATE TABLE IF NOT EXISTS public.vital
+(
+    id bigserial NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    patient_id bigserial NOT NULL,
+    heart_rate real,
+    body_temperature real,
+    ecg real,
+    ppg real,
+    sbp real,
+    dbp real,
+    spo2 real,
+    respiration_rate real,
+    PRIMARY KEY (id),
+    FOREIGN KEY (patient_id)
+        REFERENCES public.patient (id) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID
+);
+
+ALTER TABLE public.vital
+    OWNER to postgres;

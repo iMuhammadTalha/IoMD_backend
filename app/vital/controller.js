@@ -40,6 +40,16 @@ exports.getAPatientAllMedicalVitalsWithPagination = function (req, res, next) {
     });
 };
 
+exports.getPatientAllMedicalVitalsByCaretakerWithPagination = function (req, res, next) {
+    services.getPatientAllMedicalVitalsByCaretakerWithPagination(req.params.caretaker_id, req.params.page, req.params.pageSize, req.params.sortingName, req.params.sortingOrder, function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all MedicalVital'});
+        }
+        res.locals.allMedicalVitals = rows;
+        next();
+    });
+};
 
 exports.getADoctorAllMedicalVitalsWithPagination = function (req, res, next) {
     services.getADoctorAllMedicalVitalsWithPagination(req.params.doctor_id, req.params.page, req.params.pageSize, req.params.sortingName, req.params.sortingOrder, function (err, rows) {

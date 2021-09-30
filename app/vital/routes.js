@@ -21,6 +21,10 @@ router.get('/get-a-patient-all-vitals/:patient_id/:page/:pageSize/:sortingName/:
     res.send(res.locals.allMedicalVitals);
 });
 
+router.get('/get-patient-all-vitals-by-caretaker/:caretaker_id/:page/:pageSize/:sortingName/:sortingOrder',  controller.getPatientAllMedicalVitalsByCaretakerWithPagination, function (req, res) {
+    res.send(res.locals.allMedicalVitals);
+});
+
 router.get('/get-all-vitals-by-patient/:id', getAllMedicalVitalsByNode, function (req, res) {
     res.send(res.locals.allMedicalVitals);
 });

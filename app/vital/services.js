@@ -129,6 +129,61 @@ exports.getAPatientAllMedicalVitalsWithPagination = function (patient_id, page, 
     }
 };
 
+exports.getPatientAllMedicalVitalsByCaretakerWithPagination = function (caretaker_id, page, pageSize, sortingName, sortingOrder, result) {
+    let sortingQuery = ' ORDER BY created_time DESC ';
+    if (sortingOrder === 'Undefined' || sortingName === 'Undefined' || sortingOrder === 'undefined' || sortingName === 'undefined') {
+        sortingQuery = ' ORDER BY created_time DESC ';
+    } else {
+        sortingQuery = 'ORDER BY ' + sortingName + ' ' + sortingOrder;
+    }
+    const sqlQuery = `SELECT vital.id, to_char(vital.created_at , 'YYYY-MM-DD HH24:MI') AS created_time, vital.patient_id, heart_rate, body_temperature, ecg, ppg, sbp, dbp, spo2, respiration_rate , patient.name as patient_name 
+    FROM public.vital
+	JOIN public.patient ON vital.patient_id=patient.id
+	JOIN public.caretaker ON caretaker.patient_id=patient.id
+    WHERE caretaker.id= ${caretaker_id} ${sortingQuery} LIMIT ${pageSize} OFFSET ${page * pageSize} `;
+    const sqlCountQuery = `SELECT COUNT(*) as count 
+    FROM public.vital
+	JOIN public.patient ON vital.patient_id=patient.id
+	JOIN public.caretaker ON caretaker.patient_id=patient.id
+    WHERE caretaker.id= ${caretaker_id} `;
+
+    try {
+        pool.getClient((err, client, release) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            }
+            client.query(sqlQuery, (err, res) => {
+                if (err) {
+                    logger.error('Error: ', err.stack);
+                    result(err, null);
+                } else {
+                    client.query(sqlCountQuery, (err, countResponse) => {
+                        release();
+                        if (err) {
+                            logger.error('Error: ', err.stack);
+                            result(err, null);
+                        } else {
+                            let pages = Math.floor(countResponse.rows[0].count / pageSize);
+                            if (countResponse.rows[0].count % pageSize > 0) {
+                                pages += 1;
+                            }
+                            const dataToSend = {
+                                totalPages: pages,
+                                totalCount: countResponse.rows[0].count,
+                                records: res.rows
+                            };
+                            result(null, dataToSend);
+                        }
+                    });
+                }
+            });
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.getADoctorAllMedicalVitalsWithPagination = function (doctor_id, page, pageSize, sortingName, sortingOrder, result) {
     let sortingQuery = ' ORDER BY created_time DESC ';
     if (sortingOrder === 'Undefined' || sortingName === 'Undefined' || sortingOrder === 'undefined' || sortingName === 'undefined') {

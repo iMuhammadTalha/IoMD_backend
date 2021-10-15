@@ -281,7 +281,7 @@ exports.findAdmin = function findAdmin(user, result) {
                 logger.error('Error: ', err.stack);
                 result(err, null);
             }
-            logger.info(user.email);
+            // logger.info(user.email);
 
             client.query(`SELECT * FROM admin WHERE admin.email = '${user.email}'`, (err, res) => {
 

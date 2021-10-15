@@ -1,13 +1,13 @@
-CREATE DATABASE iomd;
+CREATE DATABASE IoMD;
 
 CREATE TABLE IF NOT EXISTS public.admin
 (
-    id bigint NOT NULL,
+    id bigserial NOT NULL,
     name character(255) NOT NULL,
     email character(255) NOT NULL,
-    password character(255) NOT NULL,
+    password text NOT NULL,
     CONSTRAINT admin_pkey PRIMARY KEY (id)
-)
+);
 ALTER TABLE public.admin
     OWNER to postgres;
 

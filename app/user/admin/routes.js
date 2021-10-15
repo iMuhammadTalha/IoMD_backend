@@ -13,7 +13,7 @@ router.get('/get-a-admin/:id', isTokenExpired, getAAdmin, function (req, res) {
     res.send(res.locals.aAdminUser);
 });
 
-router.post('/register-admin', upload.single('image'), validateFieldAndAlreadyEmailAndAlreadyMobile, createAdmin, function (req, res) {
+router.post('/register-admin', validateFieldAndAlreadyEmailAndAlreadyMobile, createAdmin, function (req, res) {
     res.send(res.locals.Msg);
 });
 

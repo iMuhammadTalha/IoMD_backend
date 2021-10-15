@@ -40,6 +40,22 @@ exports.getAPatientAllMedicalVitalsWithPagination = function (req, res, next) {
     });
 };
 
+exports.getAPatientLatestECGVital = function (req, res, next) {
+    
+    res.locals.allMedicalVitals = {
+        ECG: [0]
+    }
+    
+    services.getAPatientLatestECGVital(req.params.patient_id, function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get all MedicalVital'});
+        }
+        res.locals.allMedicalVitals.ECG = rows[0];
+        next();
+    });
+};
+
 exports.getPatientAllMedicalVitalsByCaretakerWithPagination = function (req, res, next) {
     services.getPatientAllMedicalVitalsByCaretakerWithPagination(req.params.caretaker_id, req.params.page, req.params.pageSize, req.params.sortingName, req.params.sortingOrder, function (err, rows) {
         if (err) {
@@ -77,18 +93,17 @@ exports.getAllMedicalVitalsByNode = function (req, res, next) {
 exports.createMedicalVital = function (req, res, next) {
 
     const MedicalVital = {
-        ch4: req.body.ch4, 
-        co: req.body.co, 
-        dust: req.body.dust, 
-        humidity: req.body.humidity, 
-        latitude: req.body.latitude, 
-        longitude: req.body.longitude, 
-        nh3: req.body.nh3, 
-        no2: req.body.no2, 
-        node_id: req.body.node_id, 
-        co2: req.body.co2,
-        temperature: req.body.temperature,
-        created_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        heart_rate: req.body.heart_rate, 
+        body_temperature: req.body.body_temperature, 
+        ecg: req.body.ecg, 
+        ppg: req.body.ppg, 
+        sbp: req.body.sbp, 
+        dbp: req.body.dbp, 
+        spo2: req.body.spo2, 
+        respiration_rate: req.body.respiration_rate, 
+        patient_id: 1, 
+        
+        created_date: moment(req.body.created_date).format('YYYY-MM-DD HH:mm:ss')
     };
 
     services.createMedicalVital(MedicalVital, function (err, MedicalVital) {
@@ -200,90 +215,138 @@ calculateAQIAverage= function(AQIs) {
 
 
 
-exports.getAQIGraph = function (req, res, next) {
-    res.locals.AQIGraphData = {
-        nh3Avg: [0],
-        coAvg: [0],
-        no2Avg: [0],
-        ch4Avg: [0],
-        co2Avg: [0],
-        dustAvg: [0],
-        humitidyAvg: [0],
-        temperatureAvg: [0],
-        dates: [],
-        AQIAvg: [0]
+exports.getDailyVitalGraph = function (req, res, next) {
+    res.locals.GraphData = {
+        date:'',
+        heartRateAvg: [0],
+        bodyTemperatureAvg: [0],
+        sbpAvg: [0],
+        dbpAvg: [0],
+        spo2Avg: [0],
+        respirationRateAvg: [0],
+        time: []
     };
 
-    const nh3Index = [200, 400, 800, 1200, 1800];
-    const coIndex = [4.4, 9.4, 12.4, 15.4, 30.4, 40.4];
-    const no2Index = [0.053, 0.1, 0.36, 0.65, 1.24, 1.64];
-    const ch4Index = [50, 100, 150, 200, 300, 400];
-    const co2Index = [1000, 2000, 5000, 10000, 20000, 40000];
-    const dustIndex = [12, 35.4, 150.4, 250.4, 350.4];
-    const ranges = [[0, 50], [51, 100], [101, 150], [151, 200], [201, 300], [301, 500]];
     
-    let nh3Avg = [];
-    let coAvg = [];
-    let no2Avg = [];
-    let ch4Avg = [];
-    let co2Avg = [];
-    let dustAvg = [];
-    let humitidyAvg = [];
-    let temperatureAvg = [];
-    let dates = [];
+    let heartRateAvg = [];
+    let bodyTemperatureAvg = [];
+    let sbpAvg = [];
+    let dbpAvg = [];
+    let spo2Avg = [];
+    let respirationRateAvg = [];
+    let time = [];
 
-    let AQIAvg = [];
-
-    services.get10lastdates(req.params.id, async function (err, last10dates) {
+    
+    services.getlastvitaldate(req.params.patient_id, async function (err, lastvitaldate) {
         if (err) {
             logger.error(err);
-            return res.status(400).send({msg: 'Error in get all MedicalVital'});
+            return res.status(400).send({msg: 'Error in get MedicalVital date'});
         }
 
-        for(let i=last10dates.length-1; i>=0; i--){
-            let dayAvg=await services.getAvgValuesdatesAsync(req.params.id, i);//, function (err, dayAvg) {
-
-                nh3Avg[i]=dayAvg.nh3;
-                coAvg[i]=dayAvg.co;
-                no2Avg[i]=dayAvg.no2;
-                ch4Avg[i]=dayAvg.ch4;
-                co2Avg[i]=dayAvg.co2;
-                dustAvg[i]=dayAvg.dust;
-                humitidyAvg[i]=dayAvg.humidity;
-                temperatureAvg[i]=dayAvg.temperature;
-                dates[i]= moment(new Date()).subtract(i, "days").format('YYYY-MM-DD');
+        logger.info(lastvitaldate[0] && lastvitaldate[0].created_at);
 
 
-                const no2AQI = this.calculateForVital(dayAvg.no2, no2Index);
-                const dustAQI = this.calculateForVital(dayAvg.dust, dustIndex);
-                const nh3AQI = this.calculateForVital(dayAvg.nh3, nh3Index);
-                const co2AQI = this.calculateForVital(dayAvg.co2, co2Index);
-                const coAQI = this.calculateForVital(dayAvg.co, coIndex);
-                const ch4AQI = this.calculateForVital(dayAvg.ch4, ch4Index);
+        if(lastvitaldate[0] && lastvitaldate[0].created_at)
+        {
+            // logger.info('IF')
+            res.locals.GraphData.date=moment(lastvitaldate[0].created_at).format('YYYY-MM-DD');
+            for(let i=0; i<=23; i++){
+                let startTime = moment(lastvitaldate[0].created_at).set('hour', i).format('YYYY-MM-DD HH:00:00')
+                let endTime = moment(lastvitaldate[0].created_at).set('hour', i).format('YYYY-MM-DD HH:59:59')
+                let hourAvg=await services.getHourAvgValueAsync(req.params.patient_id, startTime, endTime);
+                    heartRateAvg[i]=hourAvg.heart_rate;
+                    bodyTemperatureAvg[i]=hourAvg.body_temperature;
+                    sbpAvg[i]=hourAvg.sbp;
+                    dbpAvg[i]=hourAvg.dbp;
+                    spo2Avg[i]=hourAvg.spo2;
+                    respirationRateAvg[i]=hourAvg.respiration_rate;
+                    
+                    time[i]= i+':00';
 
-                let AQI=Math.round(this.calculateAQIAverage([
-                    dustAQI, nh3AQI, co2AQI, coAQI, no2AQI, ch4AQI
-                ]));
-                AQIAvg[i]=AQI;
+            }
         }
         
 
-                res.locals.AQIGraphData.nh3Avg = nh3Avg;
-                res.locals.AQIGraphData.coAvg = coAvg;
-                res.locals.AQIGraphData.no2Avg = no2Avg;
-                res.locals.AQIGraphData.ch4Avg = ch4Avg;
-                res.locals.AQIGraphData.co2Avg = co2Avg;
-                res.locals.AQIGraphData.dustAvg = dustAvg;
-                res.locals.AQIGraphData.humitidyAvg = humitidyAvg;
-                res.locals.AQIGraphData.temperatureAvg = temperatureAvg;
-                res.locals.AQIGraphData.dates = dates;
-        
-                res.locals.AQIGraphData.AQIAvg = AQIAvg;
-        
+                res.locals.GraphData.heartRateAvg = heartRateAvg;
+                res.locals.GraphData.bodyTemperatureAvg = bodyTemperatureAvg;
+                res.locals.GraphData.sbpAvg = sbpAvg;
+                res.locals.GraphData.dbpAvg = dbpAvg;
+                res.locals.GraphData.spo2Avg = spo2Avg;
+                res.locals.GraphData.respirationRateAvg = respirationRateAvg;
+
+                res.locals.GraphData.time = time;
+                
                 next();
     });
 
 };
 
+exports.getWeeklyVitalGraph = function (req, res, next) {
+    res.locals.GraphData = {
+        startDate:'',
+        endDate:'',
+        heartRateAvg: [0],
+        bodyTemperatureAvg: [0],
+        sbpAvg: [0],
+        dbpAvg: [0],
+        spo2Avg: [0],
+        respirationRateAvg: [0],
+        time: []
+    };
 
+    
+    let heartRateAvg = [];
+    let bodyTemperatureAvg = [];
+    let sbpAvg = [];
+    let dbpAvg = [];
+    let spo2Avg = [];
+    let respirationRateAvg = [];
+    let time = [];
+
+    
+    services.getlastvitaldate(req.params.patient_id, async function (err, lastvitaldate) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get MedicalVital date'});
+        }
+
+        logger.info(lastvitaldate[0] && lastvitaldate[0].created_at);
+
+
+        if(lastvitaldate[0] && lastvitaldate[0].created_at)
+        {
+            let weekStart = moment(lastvitaldate[0].created_at).subtract(7,'d').format('YYYY-MM-DD 00:00');
+
+            res.locals.GraphData.startDate=moment(weekStart).format('YYYY-MM-DD');
+            res.locals.GraphData.endDate=moment(lastvitaldate[0].created_at).format('YYYY-MM-DD');
+
+            for(let i=0; i<=21; i++){
+                let startTime = moment(weekStart).set('hour', i*8).format('YYYY-MM-DD HH:00')
+                let endTime = moment(weekStart).set('hour', (i+1)*8).format('YYYY-MM-DD HH:00')
+                let hourAvg=await services.getHourAvgValueAsync(req.params.patient_id, startTime, endTime);
+
+                    heartRateAvg[i]=hourAvg.heart_rate;
+                    bodyTemperatureAvg[i]=hourAvg.body_temperature;
+                    sbpAvg[i]=hourAvg.sbp;
+                    dbpAvg[i]=hourAvg.dbp;
+                    spo2Avg[i]=hourAvg.spo2;
+                    respirationRateAvg[i]=hourAvg.respiration_rate;
+                    
+                    time[i]= startTime;
+            }
+        }
+
+                res.locals.GraphData.heartRateAvg = heartRateAvg;
+                res.locals.GraphData.bodyTemperatureAvg = bodyTemperatureAvg;
+                res.locals.GraphData.sbpAvg = sbpAvg;
+                res.locals.GraphData.dbpAvg = dbpAvg;
+                res.locals.GraphData.spo2Avg = spo2Avg;
+                res.locals.GraphData.respirationRateAvg = respirationRateAvg;
+
+                res.locals.GraphData.time = time;
+                
+                next();
+    });
+
+};
 

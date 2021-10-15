@@ -21,12 +21,24 @@ router.get('/get-a-patient-all-vitals/:patient_id/:page/:pageSize/:sortingName/:
     res.send(res.locals.allMedicalVitals);
 });
 
+router.get('/get-a-patient-latest-ecg-vital/:patient_id',  controller.getAPatientLatestECGVital, function (req, res) {
+    res.send(res.locals.allMedicalVitals);
+});
+
 router.get('/get-patient-all-vitals-by-caretaker/:caretaker_id/:page/:pageSize/:sortingName/:sortingOrder',  controller.getPatientAllMedicalVitalsByCaretakerWithPagination, function (req, res) {
     res.send(res.locals.allMedicalVitals);
 });
 
 router.get('/get-all-vitals-by-patient/:id', getAllMedicalVitalsByNode, function (req, res) {
     res.send(res.locals.allMedicalVitals);
+});
+
+router.get('/get-daily-vitals-graph/:patient_id', controller.getDailyVitalGraph, function (req, res) {
+    res.send(res.locals.GraphData);
+});
+
+router.get('/get-weekly-vitals-graph/:patient_id', controller.getWeeklyVitalGraph, function (req, res) {
+    res.send(res.locals.GraphData);
 });
 
 router.post('/create-vital', validateField, createMedicalVital, function (req, res) {
@@ -45,9 +57,7 @@ router.get('/get-a-recent-vital/:id', getARecentVital, function (req, res) {
     res.send(res.locals.aMedicalVital);
 });
 
-router.get('/get-aqi-graph/:id', getAQIGraph, function (req, res) {
-    res.send(res.locals.AQIGraphData);
-});
+
 
 
 module.exports = router;

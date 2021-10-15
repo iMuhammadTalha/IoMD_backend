@@ -129,6 +129,22 @@ exports.getAPatientAllMedicalVitalsWithPagination = function (patient_id, page, 
     }
 };
 
+exports.getAPatientLatestECGVital = function (patient_id, result) {
+    const sqlQuery = `SELECT ARRAY( SELECT vital.ecg FROM "vital" JOIN public.patient ON vital.patient_id=patient.id WHERE patient_id= ${patient_id} ORDER BY vital.created_at DESC LIMIT 1000)`;
+    try {
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.getPatientAllMedicalVitalsByCaretakerWithPagination = function (caretaker_id, page, pageSize, sortingName, sortingOrder, result) {
     let sortingQuery = ' ORDER BY created_time DESC ';
     if (sortingOrder === 'Undefined' || sortingName === 'Undefined' || sortingOrder === 'undefined' || sortingName === 'undefined') {
@@ -248,7 +264,7 @@ exports.getAllMedicalVitalByNode = function getAllMedicalVitalByNode(patientID, 
 };
 exports.createMedicalVital = function createMedicalVital(MedicalVital, result) {
     try {
-        const sqlQuery = `INSERT INTO "vital"(created_time, ch4, co, dust, humidity, latitude, longitude, nh3, no2, node_id, co2, temperature) VALUES ( '${MedicalVital.created_date}', '${MedicalVital.ch4}', '${MedicalVital.co}', '${MedicalVital.dust}', '${MedicalVital.humidity}', '${MedicalVital.latitude}', '${MedicalVital.longitude}', '${MedicalVital.nh3}', '${MedicalVital.no2}', '${MedicalVital.node_id}', '${MedicalVital.co2}', '${MedicalVital.temperature}') RETURNING id`;
+        const sqlQuery = `INSERT INTO "vital"(created_at, patient_id, heart_rate, body_temperature, ecg, ppg, sbp, dbp, spo2, respiration_rate) VALUES ( '${MedicalVital.created_date}', '${MedicalVital.patient_id}', '${MedicalVital.heart_rate}', '${MedicalVital.body_temperature}', '${MedicalVital.ecg}', '${MedicalVital.ppg}', '${MedicalVital.sbp}', '${MedicalVital.dbp}', '${MedicalVital.spo2}', '${MedicalVital.respiration_rate}') RETURNING id`;
 
         pool.query(sqlQuery, [], (err, res) => {
             if (err) {
@@ -558,4 +574,52 @@ exports.getMinMaxValues = function(result) {
     } catch (error) {
         logger.error(error);
     }
+};
+
+
+
+
+
+exports.getlastvitaldate = function(id, result) {
+    try {
+        const sqlQuery = `SELECT
+            DISTINCT created_at::date AS created_at  
+            FROM public."vital" 
+            WHERE patient_id=${id} ORDER BY created_at DESC LIMIT 1`;
+
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
+exports.getHourAvgValueAsync = function(patient_id, startTime, endTime) {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = `SELECT 
+            AVG(heart_rate) as heart_rate,
+            AVG(body_temperature) as body_temperature,
+            AVG(sbp) as sbp,
+            AVG(dbp) as dbp,
+            AVG(spo2) as spo2, 
+            AVG(respiration_rate) AS respiration_rate
+            FROM public."vital" 
+            WHERE created_at>= '${startTime}' AND created_at<= '${endTime}' AND patient_id= '${patient_id}' `;
+            
+        pool.query(sqlQuery, [], function (err, res) {
+            if(!err) {
+                // logger.error(res.rows);
+                resolve(res.rows[0])
+            } else {
+                logger.error(err)
+                reject(err)
+            }
+        });
+    })
 };

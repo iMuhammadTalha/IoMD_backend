@@ -107,7 +107,7 @@ exports.createDoctor = function (doctor, result) {
                 logger.error('Error: ', err.stack);
                 result(err, null);
             }
-            client.query(`INSERT INTO Doctor ( name, pmdc_no, contact_no, email, specialization, password, created_date) VALUES ( '${doctor.name}', '${doctor.pmdc_no}', '${doctor.contact_no}', '${doctor.email}', '${doctor.specialization}', '${doctor.password}', '${doctor.created_date}') RETURNING id`, (err, res) => {
+            client.query(`INSERT INTO Doctor ( name, pmdc_no, contact_no, email, specialization, password, created_at) VALUES ( '${doctor.name}', '${doctor.pmdc_no}', '${doctor.contact_no}', '${doctor.email}', '${doctor.specialization}', '${doctor.password}', '${doctor.created_date}') RETURNING id`, (err, res) => {
                 if (err) {
                     logger.error('Error: ', err.stack);
                     result(err, null);

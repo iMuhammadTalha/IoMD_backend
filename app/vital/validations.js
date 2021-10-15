@@ -1,6 +1,6 @@
 exports.validateField = function (req, res, next) {
 
-    if (req.body.ch4 && req.body.co && req.body.dust && req.body.humidity && req.body.latitude && req.body.longitude && req.body.nh3 && req.body.no2 && req.body.node_id && req.body.co2 && req.body.temperature) {
+    if (req.body.heart_rate && req.body.body_temperature && req.body.ecg && req.body.ppg && req.body.sbp && req.body.dbp && req.body.spo2 && req.body.respiration_rate && req.body.created_at) {
         next();
     } else {
         next();

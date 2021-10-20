@@ -113,7 +113,7 @@ exports.doctorLogin = function (req, res) {
                     res.status(200).json({
                         token: 'Bearer ' + token,
                         user: {
-                            user_id: user.rows[0].id,
+                            id: user.rows[0].id,
                             email: user.rows[0].email,
                             name: user.rows[0].name ,
                             role: 'doctor'
@@ -157,7 +157,7 @@ exports.patientLogin = function (req, res) {
                     res.status(200).json({
                         token: 'Bearer ' + token,
                         user: {
-                            user_id: user.rows[0].id,
+                            id: user.rows[0].id,
                             email: user.rows[0].email,
                             name: user.rows[0].name ,
                             role: 'patient'
@@ -200,7 +200,7 @@ exports.caretakerLogin = function (req, res) {
                     res.status(200).json({
                         token: 'Bearer ' + token,
                         user: {
-                            user_id: user.rows[0].id,
+                            id: user.rows[0].id,
                             email: user.rows[0].email,
                             name: user.rows[0].name ,
                             role: 'caretaker'

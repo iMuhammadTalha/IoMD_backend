@@ -350,3 +350,137 @@ exports.getWeeklyVitalGraph = function (req, res, next) {
 
 };
 
+exports.getDailyVitalGraphByCaretaker = function (req, res, next) {
+    res.locals.GraphData = {
+        date:'',
+        heartRateAvg: [0],
+        bodyTemperatureAvg: [0],
+        sbpAvg: [0],
+        dbpAvg: [0],
+        spo2Avg: [0],
+        respirationRateAvg: [0],
+        time: []
+    };
+
+    
+    let heartRateAvg = [];
+    let bodyTemperatureAvg = [];
+    let sbpAvg = [];
+    let dbpAvg = [];
+    let spo2Avg = [];
+    let respirationRateAvg = [];
+    let time = [];
+
+    
+    services.getlastvitaldateByCareTaker(req.params.caretaker_id, async function (err, lastvitaldate) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get MedicalVital date'});
+        }
+
+        logger.info(lastvitaldate[0] && lastvitaldate[0].created_at);
+
+
+        if(lastvitaldate[0] && lastvitaldate[0].created_at)
+        {
+            // logger.info('IF')
+            res.locals.GraphData.date=moment(lastvitaldate[0].created_at).format('YYYY-MM-DD');
+            for(let i=0; i<=23; i++){
+                let startTime = moment(lastvitaldate[0].created_at).set('hour', i).format('YYYY-MM-DD HH:00:00')
+                let endTime = moment(lastvitaldate[0].created_at).set('hour', i).format('YYYY-MM-DD HH:59:59')
+                let hourAvg=await services.getHourAvgValueAsyncByCareTaker(req.params.caretaker_id, startTime, endTime);
+                    heartRateAvg[i]=hourAvg.heart_rate;
+                    bodyTemperatureAvg[i]=hourAvg.body_temperature;
+                    sbpAvg[i]=hourAvg.sbp;
+                    dbpAvg[i]=hourAvg.dbp;
+                    spo2Avg[i]=hourAvg.spo2;
+                    respirationRateAvg[i]=hourAvg.respiration_rate;
+                    
+                    time[i]= i+':00';
+
+            }
+        }
+        
+
+                res.locals.GraphData.heartRateAvg = heartRateAvg;
+                res.locals.GraphData.bodyTemperatureAvg = bodyTemperatureAvg;
+                res.locals.GraphData.sbpAvg = sbpAvg;
+                res.locals.GraphData.dbpAvg = dbpAvg;
+                res.locals.GraphData.spo2Avg = spo2Avg;
+                res.locals.GraphData.respirationRateAvg = respirationRateAvg;
+
+                res.locals.GraphData.time = time;
+                
+                next();
+    });
+
+};
+
+exports.getWeeklyVitalGraphByCaretaker = function (req, res, next) {
+    res.locals.GraphData = {
+        startDate:'',
+        endDate:'',
+        heartRateAvg: [0],
+        bodyTemperatureAvg: [0],
+        sbpAvg: [0],
+        dbpAvg: [0],
+        spo2Avg: [0],
+        respirationRateAvg: [0],
+        time: []
+    };
+
+    
+    let heartRateAvg = [];
+    let bodyTemperatureAvg = [];
+    let sbpAvg = [];
+    let dbpAvg = [];
+    let spo2Avg = [];
+    let respirationRateAvg = [];
+    let time = [];
+
+    
+    services.getlastvitaldateByCareTaker(req.params.caretaker_id, async function (err, lastvitaldate) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get MedicalVital date'});
+        }
+
+        logger.info(lastvitaldate[0] && lastvitaldate[0].created_at);
+
+
+        if(lastvitaldate[0] && lastvitaldate[0].created_at)
+        {
+            let weekStart = moment(lastvitaldate[0].created_at).subtract(7,'d').format('YYYY-MM-DD 00:00');
+
+            res.locals.GraphData.startDate=moment(weekStart).format('YYYY-MM-DD');
+            res.locals.GraphData.endDate=moment(lastvitaldate[0].created_at).format('YYYY-MM-DD');
+
+            for(let i=0; i<=21; i++){
+                let startTime = moment(weekStart).set('hour', i*8).format('YYYY-MM-DD HH:00')
+                let endTime = moment(weekStart).set('hour', (i+1)*8).format('YYYY-MM-DD HH:00')
+                let hourAvg=await services.getHourAvgValueAsyncByCareTaker(req.params.caretaker_id, startTime, endTime);
+
+                    heartRateAvg[i]=hourAvg.heart_rate;
+                    bodyTemperatureAvg[i]=hourAvg.body_temperature;
+                    sbpAvg[i]=hourAvg.sbp;
+                    dbpAvg[i]=hourAvg.dbp;
+                    spo2Avg[i]=hourAvg.spo2;
+                    respirationRateAvg[i]=hourAvg.respiration_rate;
+                    
+                    time[i]= startTime;
+            }
+        }
+
+                res.locals.GraphData.heartRateAvg = heartRateAvg;
+                res.locals.GraphData.bodyTemperatureAvg = bodyTemperatureAvg;
+                res.locals.GraphData.sbpAvg = sbpAvg;
+                res.locals.GraphData.dbpAvg = dbpAvg;
+                res.locals.GraphData.spo2Avg = spo2Avg;
+                res.locals.GraphData.respirationRateAvg = respirationRateAvg;
+
+                res.locals.GraphData.time = time;
+                
+                next();
+    });
+
+};

@@ -623,3 +623,54 @@ exports.getHourAvgValueAsync = function(patient_id, startTime, endTime) {
         });
     })
 };
+
+
+
+exports.getlastvitaldateByCareTaker = function(caretaker_id, result) {
+    try {
+        const sqlQuery = `SELECT
+            DISTINCT vital.created_at::date AS created_at  
+            FROM public."vital"
+            JOIN public.patient ON vital.patient_id=patient.id
+            JOIN public.caretaker ON caretaker.patient_id=patient.id
+            WHERE caretaker.id= ${caretaker_id} 
+            ORDER BY created_at DESC LIMIT 1`;
+
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
+exports.getHourAvgValueAsyncByCareTaker = function(caretaker_id, startTime, endTime) {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = `SELECT 
+            AVG(heart_rate) as heart_rate,
+            AVG(body_temperature) as body_temperature,
+            AVG(sbp) as sbp,
+            AVG(dbp) as dbp,
+            AVG(spo2) as spo2, 
+            AVG(respiration_rate) AS respiration_rate
+            FROM public."vital"
+            JOIN public.patient ON vital.patient_id=patient.id
+            JOIN public.caretaker ON caretaker.patient_id=patient.id
+            WHERE vital.created_at>= '${startTime}' AND vital.created_at<= '${endTime}' AND caretaker.id= '${caretaker_id}' `;
+            
+        pool.query(sqlQuery, [], function (err, res) {
+            if(!err) {
+                // logger.error(res.rows);
+                resolve(res.rows[0])
+            } else {
+                logger.error(err)
+                reject(err)
+            }
+        });
+    })
+};

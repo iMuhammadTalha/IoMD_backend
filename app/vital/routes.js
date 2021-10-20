@@ -41,6 +41,14 @@ router.get('/get-weekly-vitals-graph/:patient_id', controller.getWeeklyVitalGrap
     res.send(res.locals.GraphData);
 });
 
+router.get('/get-daily-vitals-graph-by-caretaker/:caretaker_id', controller.getDailyVitalGraphByCaretaker, function (req, res) {
+    res.send(res.locals.GraphData);
+});
+
+router.get('/get-weekly-vitals-graph-by-caretaker/:caretaker_id', controller.getWeeklyVitalGraphByCaretaker, function (req, res) {
+    res.send(res.locals.GraphData);
+});
+
 router.post('/create-vital', validateField, createMedicalVital, function (req, res) {
     res.send(res.locals.Msg);
 });

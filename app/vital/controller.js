@@ -201,7 +201,7 @@ calculateAQIAverage= function(AQIs) {
 
   exports.getARecentVital = function (req, res, next) {
 
-    services.getALatestMedicalVital(req.params.id, function (err, rows) {
+    services.getALatestMedicalVital(req.params.patient_id, function (err, rows) {
         if (err) {
             logger.error(err);
             return res.status(400).send({msg: 'Error in get all MedicalVital'});

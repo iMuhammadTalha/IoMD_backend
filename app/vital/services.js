@@ -18,8 +18,8 @@ exports.getAllMedicalVital = function (result) {
     }
 };
 
-exports.getALatestMedicalVital = function (nodeID, result) {
-    const sqlQuery = `SELECT * FROM "vital" WHERE node_id=${nodeID} ORDER BY created_time DESC`;
+exports.getALatestMedicalVital = function (patient_id, result) {
+    const sqlQuery = `SELECT * FROM "vital" WHERE patient_id=${patient_id} ORDER BY created_at DESC`;
     try {
         pool.query(sqlQuery, [], (err, res) => {
             if (err) {

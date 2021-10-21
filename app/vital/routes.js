@@ -61,7 +61,7 @@ router.get('/get-AQI/:id', getAQI, function (req, res) {
     res.send(res.locals.aqi);
 });
 
-router.get('/get-a-recent-vital/:id', getARecentVital, function (req, res) {
+router.get('/get-a-recent-vital/:patient_id', getARecentVital, function (req, res) {
     res.send(res.locals.aMedicalVital);
 });
 

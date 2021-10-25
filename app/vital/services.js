@@ -34,6 +34,27 @@ exports.getALatestMedicalVital = function (patient_id, result) {
     }
 };
 
+exports.getALatestMedicalVitalForCaretaker = function (caretaker_id, result) {
+    const sqlQuery = `SELECT vital.* 
+    FROM public.vital
+	JOIN public.patient ON vital.patient_id=patient.id
+	JOIN public.caretaker ON caretaker.patient_id=patient.id
+    WHERE caretaker.id= ${caretaker_id} 
+    ORDER BY vital.created_at DESC`;
+    try {
+        pool.query(sqlQuery, [], (err, res) => {
+            if (err) {
+                logger.error('Error: ', err.stack);
+                result(err, null);
+            } else {
+                result(null, res.rows);
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+    }
+};
+
 exports.getAllMedicalVitalWithPagination = function (page, pageSize, sortingName, sortingOrder, result) {
     let sortingQuery = ' ORDER BY created_time DESC ';
     if (sortingOrder === 'Undefined' || sortingName === 'Undefined' || sortingOrder === 'undefined' || sortingName === 'undefined') {

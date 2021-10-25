@@ -1,4 +1,4 @@
-const {getAllMedicalVitals, getAQI, getAllMedicalVitalsWithPagination, getANodeAllMedicalVitalsWithPagination, getAllMedicalVitalsByNode, createMedicalVital, deleteMedicalVital, getARecentVital, getAQIGraph} = require('./controller');
+const {getAllMedicalVitals, getAQI, getAllMedicalVitalsWithPagination, getARecentVitalByCaretaker, getAllMedicalVitalsByNode, createMedicalVital, deleteMedicalVital, getARecentVital, getAQIGraph} = require('./controller');
 const {validateField} = require('../vital/validations');
 // const {isTokenExpired,paginationValidation} = require('../../lib/validation');
 const controller = require('./controller');
@@ -65,7 +65,9 @@ router.get('/get-a-recent-vital/:patient_id', getARecentVital, function (req, re
     res.send(res.locals.aMedicalVital);
 });
 
-
+router.get('/get-a-recent-vital-by-caretaker/:caretaker_id', getARecentVitalByCaretaker, function (req, res) {
+    res.send(res.locals.aMedicalVital);
+});
 
 
 module.exports = router;

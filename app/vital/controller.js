@@ -199,7 +199,7 @@ calculateAQIAverage= function(AQIs) {
     return sum / AQIs.length;
   }
 
-  exports.getARecentVital = function (req, res, next) {
+exports.getARecentVital = function (req, res, next) {
 
     services.getALatestMedicalVital(req.params.patient_id, function (err, rows) {
         if (err) {
@@ -213,6 +213,17 @@ calculateAQIAverage= function(AQIs) {
     
 };
 
+
+exports.getARecentVitalByCaretaker = function (req, res, next) {
+    services.getALatestMedicalVitalForCaretaker(req.params.caretaker_id, function (err, rows) {
+        if (err) {
+            logger.error(err);
+            return res.status(400).send({msg: 'Error in get a MedicalVital'});
+        }
+    res.locals.aMedicalVital = rows[0];
+    next();
+    });  
+};
 
 
 exports.getDailyVitalGraph = function (req, res, next) {

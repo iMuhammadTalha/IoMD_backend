@@ -1,5 +1,5 @@
 const {getAllFleets, createFleet, loginFleet, deleteFleet, updateFleet, getFleetTotalRides, getFleetTotalCompletedRides, getFleetRevenue, getFleetTotalDrivers, getFleetTotalCancelledRides} = require('./controller');
-const {validateFieldAndAlreadyEmailAndAlreadyMobile, isRequiredFieldMissed} = require('../careTaker/validations');
+const {validateFieldAndAlreadyEmailAndAlreadyMobile, isRequiredFieldMissed} = require('../caretaker/validations');
 // const {isTokenExpired,paginationValidation, getFleetIdFromToken} = require('../../../lib/validation');
 const controller = require('./controller');
 
